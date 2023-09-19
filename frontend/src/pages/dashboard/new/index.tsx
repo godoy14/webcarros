@@ -1,12 +1,27 @@
+
+import { ChangeEvent, useState, useContext } from "react";
+
+import { AuthContext } from "../../../contexts/authContext";
+
 import { Container } from "../../../components/container";
 import { DashboardHeader } from "../../../components/panelHeader";
 
-import { FiUpload} from 'react-icons/fi';
+import { FiUpload, FiTrash } from 'react-icons/fi';
 
 import { useForm } from 'react-hook-form';
 import { Input } from "../../../components/input";
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { v4 as uuidV4 } from 'uuid';
+
+import { storage } from '../../../services/firebaseConnection';
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+} from 'firebase/storage';
 
 const schema = z.object({
     name: z.string().nonempty("O nome é obrigatório."),
@@ -23,7 +38,18 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+interface IImageItemProps{
+    uid: string;
+    name: string;
+    previewUrl: string;
+    url: string;
+}
+
 export function New() {
+
+    const [carImages, setCarImages] = useState<IImageItemProps[]>([]);
+
+    const { user } = useContext(AuthContext);
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -32,6 +58,57 @@ export function New() {
 
     function onSubmit(data : FormData){
         console.log(data);
+    }
+
+    async function handleFile(e : ChangeEvent<HTMLInputElement>){
+
+        if(e.target.files && e.target.files[0]) {
+            const image = e.target.files[0];
+
+            if(image.type === 'image/jpeg' || image.type === 'image/png'){
+                await handleUpload(image);
+            } else {
+                alert("Envia imagem jpeg ou png");
+                return;
+            }
+        }
+
+    }
+
+    async function handleUpload(image : File) {
+
+        if(!user?.uid) {
+            return;
+        }
+
+        const currentUid = user?.uid;
+        const uidImage = uuidV4();
+
+        const uploadRef = ref(storage, `images/${currentUid}/${uidImage}`);
+        uploadBytes(uploadRef, image)
+            .then((snapshot) => {
+                getDownloadURL(snapshot.ref).then((dowsloadURL) => {
+                        const imageItem = {
+                            name: uidImage,
+                            uid: currentUid,
+                            previewUrl: URL.createObjectURL(image),
+                            url: dowsloadURL,
+                        }
+                        setCarImages((images) => [...images, imageItem]);
+                    })
+            })
+
+    }
+
+    async function handleDeleteImage(item : IImageItemProps) {
+        const imagePath = `images/${item.uid}/${item.name}`;
+        const imageRef = ref(storage, imagePath);
+        try {
+            await deleteObject(imageRef)
+            setCarImages(carImages.filter((car) => car.url !== item.url));
+        } catch(err) {
+            console.log(err)
+        }
     }
 
     return(
@@ -54,10 +131,30 @@ export function New() {
                         <input 
                             className="opacity-0 cursor-pointer"
                             type="file" 
-                            accept="image/*" 
+                            accept="image/*"
+                            onChange={handleFile}
                         />
                     </div>
                 </button>
+
+                {carImages.map( item => (
+                    <div
+                        key={item.name}
+                        className="w-full h-32 flex items-center justify-center relative"
+                    >
+                        <button
+                            onClick={() => handleDeleteImage(item)}
+                            className="absolute"
+                        >
+                            <FiTrash size={28} color="#FFF"/>
+                        </button>
+                        <img 
+                            src={item.previewUrl}
+                            className="rounded-lg w-full h-32 object-cover"
+                            alt="foto do carro"
+                        />
+                    </div>
+                ))}
             </div>
 
             <div
