@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { auth } from '../../services/firebaseConnection';
 import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
+import toast from 'react-hot-toast';
 
 const schema = z.object({
     name: z.string().nonempty("O campo nome é obrigatório"),
@@ -46,9 +47,11 @@ export function Register() {
                     uid: user.user.uid
                 })
                 console.log("cadastrado com sucesso");
+                toast.success("Registrado com sucesso!")
                 navigate("/dashboard", { replace : true })
             })
             .catch((error) => {
+                toast.error("Erro ao cadastrar!")
                 console.log("erro ao cadastrar")
                 console.log(error)
             })

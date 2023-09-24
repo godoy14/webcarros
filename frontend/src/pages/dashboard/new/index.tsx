@@ -15,13 +15,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { v4 as uuidV4 } from 'uuid';
 
-import { storage } from '../../../services/firebaseConnection';
+import { storage, db } from '../../../services/firebaseConnection';
 import {
     ref,
     uploadBytes,
     getDownloadURL,
     deleteObject
 } from 'firebase/storage';
+
+import { addDoc, collection} from 'firebase/firestore';
+import toast from "react-hot-toast";
 
 const schema = z.object({
     name: z.string().nonempty("O nome é obrigatório."),
@@ -57,7 +60,43 @@ export function New() {
     })
 
     function onSubmit(data : FormData){
-        console.log(data);
+
+        if(carImages.length === 0) {
+            toast.error("Envie alguma imagem deste carro!")
+            return;
+        }
+
+        const carListImages = carImages.map( car => {
+            return{
+                uid: car.uid,
+                name: car.name,
+                url: car.url
+            }
+        })
+
+        addDoc(collection(db, "cars"), {
+            name: data.name.toUpperCase(),
+            model: data.model,
+            whatsapp: data.whatsapp,
+            city: data.city,
+            year: data.year,
+            km: data.km,
+            price: data.price,
+            description: data.description,
+            created: new Date(),
+            ownder: user?.name,
+            uid: user?.uid,
+            images: carListImages
+        }).then(() => {
+            toast.success("Carro cadastrado com sucesso!")
+            console.log("cadastrado com sucesso");
+            reset();
+            setCarImages([]);
+        }).catch((error) => {
+            toast.error("Não foi possível cadastrar o carro!")
+            console.log(error);
+        })
+
     }
 
     async function handleFile(e : ChangeEvent<HTMLInputElement>){
