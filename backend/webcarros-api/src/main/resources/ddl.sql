@@ -1,0 +1,5 @@
+create table tab_carros (carro_preco decimal(38,2), carro_data_atualizacao datetime, carro_data_criacao datetime, carro_id bigint not null auto_increment, carro_km bigint, carro_usuario_id bigint not null, carro_ano varchar(255), carro_cidade varchar(255), carro_codigo varchar(255), carro_nome varchar(255) not null, carro_status enum ('A_VENDA','EM_NEGOCIACAO','VENDIDO'), primary key (carro_id)) engine=InnoDB;
+create table tab_fotos (foto_carro bigint not null, foto_id bigint not null auto_increment, foto_codigo varchar(255), foto_nome varchar(255) not null, foto_url varchar(255) not null, foto_image mediumblob not null, primary key (foto_id)) engine=InnoDB;
+create table tab_usuarios (data_cadastro datetime not null, id bigint not null auto_increment, email varchar(255) not null, nome varchar(255) not null, senha varchar(255) not null, primary key (id)) engine=InnoDB;
+alter table tab_carros add constraint FKce30ram4ate45fj719uvqkhqe foreign key (carro_usuario_id) references tab_usuarios (id);
+alter table tab_fotos add constraint FKnm84m7kji0kjx4xqt2o858597 foreign key (foto_carro) references tab_carros (carro_id);
