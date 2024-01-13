@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import com.webcarros.domain.model.Foto;
+import com.webcarros.api.dto.foto.FotoCarViewModel;
 import com.webcarros.domain.model.StatusCarro;
 import com.webcarros.domain.model.Usuario;
 
@@ -32,7 +32,7 @@ public class CarroModel {
 	
 	private Usuario usuario;
 	
-	private List<Foto> fotos;
+	private List<FotoCarViewModel> fotos;
 
 	public Long getId() {
 		return id;
@@ -122,12 +122,12 @@ public class CarroModel {
 		this.usuario = usuario;
 	}
 
-	public List<Foto> getFotos() {
+	public List<FotoCarViewModel> getFotos() {
 		return fotos;
 	}
 
-	public void setFotos(List<Foto> fotos) {
+	public void setFotos(List<FotoCarViewModel> fotos) {
 		this.fotos = fotos;
 	}
-	
+
 }

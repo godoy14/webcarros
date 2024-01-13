@@ -2,6 +2,7 @@ package com.webcarros.domain.model;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,7 +67,7 @@ public class Carro {
 	private Usuario usuario;
 	
 	@OneToMany(mappedBy = "carro", cascade = CascadeType.ALL)
-	private List<Foto> fotos;
+	private List<Foto> fotos = new ArrayList<>();
 	
 	public Long getId() {
 		return id;

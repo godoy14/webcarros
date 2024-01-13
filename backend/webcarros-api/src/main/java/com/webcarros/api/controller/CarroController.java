@@ -48,7 +48,14 @@ public class CarroController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public CarroModel cadastrar(@ModelAttribute @Valid CarroInputModel carroInput, @RequestPart List<MultipartFile> fotos) {
-		Carro carro = carroService.cadastrar(carroAssemblers.toDomainObject(carroInput));
+		
+		Carro carro = new Carro();
+		
+		if (fotos.isEmpty() || fotos == null) {
+			carro = carroService.cadastrar(carroAssemblers.toDomainObject(carroInput));
+		} else {
+			carro = carroService.cadastrarComFotos(carroAssemblers.toDomainObject(carroInput), fotos);
+		}
 		
 		if (carro == null) {
 			System.out.println("Erro no cadastro do Carro");
