@@ -21,6 +21,10 @@ public class UsuarioService {
 		return usuarioRepository.findAll();
 	}
 	
+	public Usuario buscarOuFalhar(Long usuarioId) {
+		return usuarioRepository.findById(usuarioId).get();
+	}
+	
 	@Transactional
 	public Usuario cadastrar(Usuario usuario) {
 		
