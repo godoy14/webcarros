@@ -16,33 +16,33 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tab_fotos")
 public class Foto {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "foto_id")
 	private Long id;
-	
+
 	@Column(name = "foto_codigo")
 	private String codigo;
-	
-	@Column(name = "foto_nome", nullable=false)
+
+	@Column(name = "foto_nome", nullable = false)
 	private String nome;
-	
-	@Column(name = "foto_url", nullable=false)
+
+	@Column(name = "foto_url", nullable = false)
 	private String url;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "foto_carro", nullable = false)
 	private Carro carro;
-	
+
 	@Lob
-	@Column(name = "foto_image", nullable=false, columnDefinition="mediumblob")
+	@Column(name = "foto_image", nullable = false, columnDefinition = "mediumblob")
 	private byte[] image;
-	
+
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -78,7 +78,7 @@ public class Foto {
 	public void setImage(byte[] image) {
 		this.image = image;
 	}
-	
+
 	public Carro getCarro() {
 		return carro;
 	}
@@ -89,7 +89,11 @@ public class Foto {
 
 	@PrePersist
 	private void gerarUUID() {
-		setCodigo(UUID.randomUUID().toString());
+		String uuid = UUID.randomUUID().toString();
+		setCodigo(uuid);
+		StringBuilder path = new StringBuilder("/fotos/")
+				.append(uuid);
+		setUrl(path.toString());
 	}
 
 }

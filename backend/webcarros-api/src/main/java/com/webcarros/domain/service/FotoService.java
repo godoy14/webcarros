@@ -27,8 +27,7 @@ public class FotoService {
 		
 		Foto foto = new Foto();
 		foto.setCarro(carro);
-		foto.setNome(file.getName());
-		foto.setUrl(file.getName());
+		foto.setNome(file.getOriginalFilename());
 		try {
 			foto.setImage(file.getBytes());
 		} catch (IOException e) {

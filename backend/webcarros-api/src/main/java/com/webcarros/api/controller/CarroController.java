@@ -52,9 +52,9 @@ public class CarroController {
 		Carro carro = new Carro();
 		
 		if (fotos.isEmpty() || fotos == null) {
-			carro = carroService.cadastrar(carroAssemblers.toDomainObject(carroInput));
+			carro = carroService.cadastrar(carroInput);
 		} else {
-			carro = carroService.cadastrarComFotos(carroAssemblers.toDomainObject(carroInput), fotos);
+			carro = carroService.cadastrarComFotos(carroInput, fotos);
 		}
 		
 		if (carro == null) {

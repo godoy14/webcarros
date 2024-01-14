@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.webcarros.api.dto.foto.FotoAssemblers;
 import com.webcarros.domain.model.Foto;
 import com.webcarros.domain.service.FotoService;
 
@@ -22,9 +21,6 @@ public class FotoController {
 	
 	@Autowired
 	private FotoService fotoService;
-	
-	@Autowired
-	private FotoAssemblers fotoAssemblers;
 	
 	@GetMapping("/{codigo}")
 	public ResponseEntity<InputStreamResource> buscarFotoPorCodigo(@PathVariable String codigo) {
