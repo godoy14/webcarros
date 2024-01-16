@@ -1,5 +1,7 @@
 package com.webcarros.domain.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,13 @@ public class CarroService {
 		return carroRepository.findByStatus(statusEnum);
 	}
 	
+	public List<Carro> listarPeloUsuario(Long usuarioId) {
+		
+		Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
+		
+		return carroRepository.findByUsuario(usuario);
+	}
+	
 	public Carro buscarOuFalhar(Long carroId) {
 		return carroRepository.findById(carroId).orElseThrow();
 	}
@@ -84,6 +93,12 @@ public class CarroService {
 	}
 	
 	@Transactional
+	public void deletar(Long carroId) {
+		carroRepository.deleteById(carroId);
+		carroRepository.flush();
+	}
+	
+	@Transactional
 	public Carro atualizar(CarroInputModel carro, List<MultipartFile> fotos, String codigo) {
 		
 		Carro carroAtual = buscarOuFalhar(codigo);
@@ -94,12 +109,31 @@ public class CarroService {
 		carroAtual.setNome(carro.getNome());
 		carroAtual.setPreco(carro.getPreco());
 		
-		// Retira imagens excluidas
-		carroAtual.getFotos().forEach(foto -> {
-			
-		});
+		List<Foto> novasFotos = new ArrayList<>();
 		
-		return null;
+		fotos.forEach(foto -> {
+			Foto novaFoto = (Foto) fotoService.buscarPorNomeECarro(foto.getOriginalFilename(), carroAtual.getCodigo());
+			System.out.println(foto.getName());
+			if ( novaFoto == null) {
+				novaFoto = new Foto();
+				novaFoto.setNome(foto.getOriginalFilename());
+				novaFoto.setCarro(carroAtual);
+				try {
+					novaFoto.setImage(foto.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			novasFotos.add(novaFoto);
+		});
+		carroAtual.getFotos().clear();
+		
+		carroAtual.setFotos(novasFotos);
+		
+		carroRepository.save(carroAtual);
+		carroRepository.flush();
+		
+		return carroAtual;
 		
 	}
 

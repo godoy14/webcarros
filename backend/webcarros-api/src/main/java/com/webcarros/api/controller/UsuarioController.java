@@ -39,7 +39,8 @@ public class UsuarioController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public UsuarioModel cadastrar(@RequestBody @Valid UsuarioInputModel usuarioInput) {
-		return usuarioAssemblers.toModel(usuarioService.cadastrar(usuarioAssemblers.toDomainObject(usuarioInput)));
+			
+		return usuarioAssemblers.toModel(usuarioService.cadastrar(usuarioInput));
 	}
 
 }

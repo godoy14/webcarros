@@ -1,5 +1,6 @@
 package com.webcarros.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,7 @@ import com.webcarros.domain.model.Foto;
 public interface FotoRepository extends JpaRepository<Foto, Long>{
 	
 	Optional<Foto> findByCodigo(String codigo);
+	
+	List<Foto> findByNomeAndCarroCodigo(String nome, String carroCodigo);
 
 }
