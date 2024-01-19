@@ -19,4 +19,6 @@ public interface CarroRepository extends JpaRepository<Carro, Long>{
 	
 	List<Carro> findByUsuario(Usuario usuario);
 	
+	List<Carro> findByNomeContainsAndStatus(String nome, StatusCarro status);
+	
 }

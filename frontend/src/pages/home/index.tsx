@@ -4,34 +4,26 @@ import { Link } from 'react-router-dom';
 
 import { useState, useEffect } from 'react';
 
-import {
-    collection,
-    query,
-    orderBy,
-    getDocs,
-    where
-} from 'firebase/firestore';
-
-import { db } from '../../services/firebaseConnection';
-
 import axios from "../../api/axios";
 
 interface ICarProps {
     id: string;
-    name: string;
-    year: string;
-    uid: string;
-    price: string | number;
-    city: string;
+    nome: string;
+    ano: string;
+    codigo: string;
+    preco: string | number;
+    cidade: string;
     km: string;
-    images: ICarImageProps[];
+    fotos: ICarImageProps[];
 }
 
 interface ICarImageProps {
-    name: string;
-    uid: string;
+    nome: string;
+    codigo: string;
     url: string;
 }
+
+const BASE_URL = "http://localhost:8080";
 
 export function Home() {
 
@@ -49,7 +41,6 @@ export function Home() {
 
     async function loadCars() {
 
-        
         const CARS_URL = "/carros";
 
         await axios.get(CARS_URL, {
@@ -58,18 +49,23 @@ export function Home() {
             }
         }).then(snapshot => {
 
+            // console.log(snapshot);
+
             const r = snapshot.data.map((item : ICarProps) => {
                 return {
                     id: item.id,
-                    codigo: item.uid,
-                    nome: item.name,
-                    ano: item.year,
-                    preco: item.price,
-                    cidade: item.city,
+                    codigo: item.codigo,
+                    nome: item.nome,
+                    ano: item.ano,
+                    preco: item.preco,
+                    cidade: item.cidade,
                     km: item.km,
-                    fotos: item.images
+                    fotos: item.fotos
                 }
             })
+
+            console.log("R");
+            console.log(r);
 
             setCars(r);
         })
@@ -112,27 +108,27 @@ export function Home() {
         setCars([]);
         setLoadImages([]);
 
-        const q = query(collection (db, "cars"),
-        where("name", ">=", input.toUpperCase()),
-        where("name", "<=", input.toUpperCase() + "\uf8ff")
-        )
+        // const q = query(collection (db, "cars"),
+        // where("name", ">=", input.toUpperCase()),
+        // where("name", "<=", input.toUpperCase() + "\uf8ff")
+        // )
 
-        const querySnapshot = await getDocs(q);
+        // const querySnapshot = await getDocs(q);
 
         let listCars = [] as ICarProps[];
 
-        querySnapshot.forEach(doc => {
-            listCars.push({
-                id: doc.id,
-                uid: doc.data().uid,
-                name: doc.data().name,
-                year: doc.data().year,
-                price: doc.data().price,
-                city: doc.data().city,
-                km: doc.data().km,
-                images: doc.data().images
-            })
-        })
+        // querySnapshot.forEach(item => {
+        //     listCars.push({
+        //         id: item.id,
+        //         codigo: item.codigo,
+        //         nome: item.nome,
+        //         ano: item.ano,
+        //         preco: item.preco,
+        //         cidade: item.cidade,
+        //         km: item.km,
+        //         fotos: item.fotos
+        //     })
+        // })
 
         setCars(listCars);
     }
@@ -186,7 +182,7 @@ export function Home() {
                             <img
                                 className="w-full rounded-lg mb-2 max-h-72
                                     hover:scale-105 transition-all"
-                                src={car.images[0].url}
+                                src={BASE_URL + car.fotos[0].url}
                                 alt="Carro"
                                 onLoad={() => handleImageLoad(car.id)}
                                 style={{ display : loadImages.includes(car.id) ? "block" : "none" }}
@@ -194,7 +190,7 @@ export function Home() {
                             <p
                                 className="font-bold mt-1 mb-2 px-2"
                             >
-                                {car.name}
+                                {car.nome}
                             </p>
 
                             <div
@@ -203,12 +199,12 @@ export function Home() {
                                 <span
                                     className="text-zinc-700 mb-6"
                                 >
-                                    Ano {car.year} | {car.km} KM
+                                    Ano {car.ano} | {car.km} KM
                                 </span>
                                 <strong
                                     className="text-black font-medium text-xl"
                                 >
-                                    R$ {car.price}
+                                    R$ {car.preco}
                                 </strong>
                             </div>
 
@@ -220,7 +216,7 @@ export function Home() {
                                 <span
                                     className="text-zinc-700"
                                 >
-                                    {car.city}
+                                    {car.cidade}
                                 </span>
                             </div>
                         </section>

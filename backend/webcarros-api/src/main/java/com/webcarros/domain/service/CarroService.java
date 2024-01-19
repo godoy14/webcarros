@@ -53,6 +53,11 @@ public class CarroService {
 		return carroRepository.findByUsuario(usuario);
 	}
 	
+	public List<Carro> listarPeloNomeEStatus(String nome, String status) {
+		StatusCarro statusEnum = StatusCarro.valueOf(status);
+		return carroRepository.findByNomeContainsAndStatus(nome, statusEnum);
+	}
+	
 	public Carro buscarOuFalhar(Long carroId) {
 		return carroRepository.findById(carroId).orElseThrow();
 	}
