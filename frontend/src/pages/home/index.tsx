@@ -14,6 +14,7 @@ import {
 
 import { db } from '../../services/firebaseConnection';
 
+import axios from "../../api/axios";
 
 interface ICarProps {
     id: string;
@@ -46,30 +47,55 @@ export function Home() {
 
     }, []);
 
-    function loadCars() {
+    async function loadCars() {
 
-        const carsRef = collection(db, "cars");
-        const queryRef = query(carsRef, orderBy("created", "desc"));
+        
+        const CARS_URL = "/carros";
 
-        getDocs(queryRef)
-         .then((snapshot) => {
-            let listCars = [] as ICarProps[];
+        await axios.get(CARS_URL, {
+            params: {
+                status : 'A_VENDA'
+            }
+        }).then(snapshot => {
 
-            snapshot.forEach(doc => {
-                listCars.push({
-                    id: doc.id,
-                    uid: doc.data().uid,
-                    name: doc.data().name,
-                    year: doc.data().year,
-                    price: doc.data().price,
-                    city: doc.data().city,
-                    km: doc.data().km,
-                    images: doc.data().images
-                })
+            const r = snapshot.data.map((item : ICarProps) => {
+                return {
+                    id: item.id,
+                    codigo: item.uid,
+                    nome: item.name,
+                    ano: item.year,
+                    preco: item.price,
+                    cidade: item.city,
+                    km: item.km,
+                    fotos: item.images
+                }
             })
 
-            setCars(listCars);
+            setCars(r);
         })
+
+        // const carsRef = collection(db, "cars");
+        // const queryRef = query(carsRef, orderBy("created", "desc"));
+
+        // getDocs(queryRef)
+        //  .then((snapshot) => {
+        //     let listCars = [] as ICarProps[];
+
+        //     snapshot.forEach(doc => {
+        //         listCars.push({
+        //             id: doc.id,
+        //             uid: doc.data().uid,
+        //             name: doc.data().name,
+        //             year: doc.data().year,
+        //             price: doc.data().price,
+        //             city: doc.data().city,
+        //             km: doc.data().km,
+        //             images: doc.data().images
+        //         })
+        //     })
+
+        //     setCars(listCars);
+        // })
 
     }
 
