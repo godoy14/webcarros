@@ -49,8 +49,6 @@ export function Home() {
             }
         }).then(snapshot => {
 
-            // console.log(snapshot);
-
             const r = snapshot.data.map((item : ICarProps) => {
                 return {
                     id: item.id,
@@ -63,9 +61,6 @@ export function Home() {
                     fotos: item.fotos
                 }
             })
-
-            console.log("R");
-            console.log(r);
 
             setCars(r);
         })
@@ -100,7 +95,7 @@ export function Home() {
     }
 
     async function handleSearchCar() {
-        if(input === '') {
+        if(input === '' && input.length >= 2) {
             loadCars();
             return;
         }
@@ -115,22 +110,30 @@ export function Home() {
 
         // const querySnapshot = await getDocs(q);
 
-        let listCars = [] as ICarProps[];
+        const PESQUISA_CARROS_URL = "/carros/pesquisa";
 
-        // querySnapshot.forEach(item => {
-        //     listCars.push({
-        //         id: item.id,
-        //         codigo: item.codigo,
-        //         nome: item.nome,
-        //         ano: item.ano,
-        //         preco: item.preco,
-        //         cidade: item.cidade,
-        //         km: item.km,
-        //         fotos: item.fotos
-        //     })
-        // })
+        await axios.get(PESQUISA_CARROS_URL, {
+            params: {
+                status : 'A_VENDA',
+                nome : input
+            }
+        }).then(snapshot => {
 
-        setCars(listCars);
+            const r = snapshot.data.map((item : ICarProps) => {
+                return {
+                    id: item.id,
+                    codigo: item.codigo,
+                    nome: item.nome,
+                    ano: item.ano,
+                    preco: item.preco,
+                    cidade: item.cidade,
+                    km: item.km,
+                    fotos: item.fotos
+                }
+            })
+
+            setCars(r);
+        })
     }
 
     return(
