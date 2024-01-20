@@ -42,6 +42,12 @@ public class CarroController {
 //		return carroAssemblers.toCollectionModel(carroService.listarTodos());
 //	}
 	
+	@GetMapping("detalhes/{codigoCarro}")
+	public CarroModel detalhesCarroPeloCodigo(
+			@PathVariable String codigoCarro) {
+		return carroAssemblers.toModel(carroService.buscarOuFalhar(codigoCarro));
+	}
+	
 	@GetMapping
 	public List<CarroModel> listarCarrosPorStatus(@RequestParam(value = "status") String status) {
 		return carroAssemblers.toCollectionModel(carroService.listarPeloStatus(status));

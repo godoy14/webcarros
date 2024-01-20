@@ -64,30 +64,6 @@ export function Home() {
 
             setCars(r);
         })
-
-        // const carsRef = collection(db, "cars");
-        // const queryRef = query(carsRef, orderBy("created", "desc"));
-
-        // getDocs(queryRef)
-        //  .then((snapshot) => {
-        //     let listCars = [] as ICarProps[];
-
-        //     snapshot.forEach(doc => {
-        //         listCars.push({
-        //             id: doc.id,
-        //             uid: doc.data().uid,
-        //             name: doc.data().name,
-        //             year: doc.data().year,
-        //             price: doc.data().price,
-        //             city: doc.data().city,
-        //             km: doc.data().km,
-        //             images: doc.data().images
-        //         })
-        //     })
-
-        //     setCars(listCars);
-        // })
-
     }
 
     function handleImageLoad(id : string) {
@@ -102,13 +78,6 @@ export function Home() {
         
         setCars([]);
         setLoadImages([]);
-
-        // const q = query(collection (db, "cars"),
-        // where("name", ">=", input.toUpperCase()),
-        // where("name", "<=", input.toUpperCase() + "\uf8ff")
-        // )
-
-        // const querySnapshot = await getDocs(q);
 
         const PESQUISA_CARROS_URL = "/carros/pesquisa";
 
@@ -171,8 +140,8 @@ export function Home() {
             >
                 {cars.map(car => (
                     <Link
-                        key={car.id} 
-                        to={`/car/${car.id}`}
+                        key={car.codigo}
+                        to={`/car/${car.codigo}`}
                     >
                         <section
                             className="w-full bg-white rounded-lg"
