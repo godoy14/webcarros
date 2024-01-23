@@ -1,0 +1,1 @@
+alter table tab_usuarios add cargo enum ('ADMIN','USER');

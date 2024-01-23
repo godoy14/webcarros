@@ -56,7 +56,6 @@ export function CarDetail() {
                 if(!snapshot.data) {
                     navigate("/");
                 }
-                console.log(snapshot);
 
                 setCar({
                     id: snapshot.data?.id,
@@ -110,7 +109,9 @@ export function CarDetail() {
                     navigation
                 >
                     {car?.images.map( image => (
-                        <SwiperSlide key={image.uid}>
+                        <SwiperSlide
+                            key={image.uid}
+                        >
                             <img
                                 className='w-full h-96 object-cover'
                                 src={BASE_URL + image.url}

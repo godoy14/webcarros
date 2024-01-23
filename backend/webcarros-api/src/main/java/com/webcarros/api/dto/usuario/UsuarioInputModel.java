@@ -1,5 +1,7 @@
 package com.webcarros.api.dto.usuario;
 
+import com.webcarros.domain.model.CargoUsuario;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,6 +18,8 @@ public class UsuarioInputModel {
 	@NotBlank
 	@Size(min = 6)
 	private String senha;
+	
+	private CargoUsuario cargo;
 
 	public String getNome() {
 		return nome;
@@ -39,6 +43,14 @@ public class UsuarioInputModel {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+
+	public CargoUsuario getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(CargoUsuario cargo) {
+		this.cargo = cargo;
 	}
 
 }

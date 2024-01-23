@@ -1,11 +1,18 @@
 package com.webcarros.domain.model;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,8 +20,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tab_usuarios")
-public class Usuario {
+public class Usuario implements UserDetails{
 	
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "usuario_id")
@@ -28,6 +37,9 @@ public class Usuario {
 	
 	@Column(nullable = false)
 	private String senha;
+	
+	@Enumerated(EnumType.STRING)
+	private CargoUsuario cargo;
 	
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
@@ -73,6 +85,14 @@ public class Usuario {
 		this.dataCadastro = dataCadastro;
 	}
 
+	public CargoUsuario getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(CargoUsuario cargo) {
+		this.cargo = cargo;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -95,6 +115,42 @@ public class Usuario {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		return true;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		if(this.cargo == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+		else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+	}
+
+	@Override
+	public String getPassword() {
+		return null;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.nome;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
 		return true;
 	}
 
