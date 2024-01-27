@@ -10,9 +10,9 @@ import com.webcarros.domain.model.Foto;
 
 @Repository
 public interface FotoRepository extends JpaRepository<Foto, Long>{
-	
+
 	Optional<Foto> findByCodigo(String codigo);
-	
+
 	List<Foto> findByNomeAndCarroCodigo(String nome, String carroCodigo);
 
 }

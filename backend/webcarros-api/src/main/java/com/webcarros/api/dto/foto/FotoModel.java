@@ -1,15 +1,15 @@
 package com.webcarros.api.dto.foto;
 
 public class FotoModel {
-	
+
 	private Long id;
-	
+
 	private String codigo;
-	
+
 	private String nome;
-	
+
 	private String url;
-	
+
 	private byte[] image;
 
 	public Long getId() {

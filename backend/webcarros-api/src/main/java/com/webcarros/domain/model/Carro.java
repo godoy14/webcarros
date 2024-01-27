@@ -26,49 +26,49 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tab_carros")
 public class Carro {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "carro_id")
 	private Long id;
-	
+
 	@Column(name = "carro_codigo")
 	private String codigo;
-	
+
 	@Column(name = "carro_nome", nullable = false)
 	private String nome;
-	
+
 	@Column(name = "carro_ano")
 	private String ano;
-	
+
 	@Column(name = "carro_preco")
 	private BigDecimal preco;
-	
+
 	@Column(name = "carro_cidade")
 	private String cidade;
-	
+
 	@Column(name = "carro_km")
 	private Long km;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "carro_status")
 	private StatusCarro status = StatusCarro.A_VENDA;
-	
+
 	@CreationTimestamp
 	@Column(name = "carro_data_criacao", columnDefinition = "datetime")
 	private OffsetDateTime dataCriacao;
-	
+
 	@UpdateTimestamp
 	@Column(name = "carro_data_atualizacao", columnDefinition = "datetime")
 	private OffsetDateTime dataAtualizacao;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "carro_usuario_id", nullable = false)
 	private Usuario usuario;
-	
+
 	@OneToMany(mappedBy = "carro", cascade = CascadeType.ALL)
 	private List<Foto> fotos = new ArrayList<>();
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -140,7 +140,7 @@ public class Carro {
 	public void setFotos(List<Foto> fotos) {
 		this.fotos = fotos;
 	}
-	
+
 	public StatusCarro getStatus() {
 		return status;
 	}

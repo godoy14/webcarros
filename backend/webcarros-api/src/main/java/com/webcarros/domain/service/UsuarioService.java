@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.webcarros.api.dto.usuario.UsuarioAssemblers;
@@ -15,34 +16,39 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService {
-	
+
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
+
 	@Autowired
 	private UsuarioAssemblers usuarioAssemblers;
-	
+
+	@Autowired
+	private PasswordEncoder encoder;
+
 	public List<Usuario> listar() {
 		return usuarioRepository.findAll();
 	}
-	
+
 	public Usuario buscarOuFalhar(Long usuarioId) {
 		return usuarioRepository.findById(usuarioId).get();
 	}
-	
+
 	@Transactional
 	public Usuario cadastrar(UsuarioInputModel usuarioInput) {
-		
+
 		Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuarioInput.getEmail());
-		
+
 		if (usuarioExistente.isPresent()) {
 			throw new RuntimeException("Já existe um usuário cadastrado para o email informado");
 		}
-		
+
 		Usuario usuario = usuarioAssemblers.toDomainObject(usuarioInput);
-		
+
+		usuario.setSenha(encoder.encode(usuario.getSenha()));
+
 		return usuarioRepository.save(usuario);
-		
+
 	}
 
 }

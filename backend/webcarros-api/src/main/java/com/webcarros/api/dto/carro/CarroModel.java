@@ -9,29 +9,29 @@ import com.webcarros.domain.model.StatusCarro;
 import com.webcarros.domain.model.Usuario;
 
 public class CarroModel {
-	
+
 	private Long id;
-	
+
 	private String codigo;
-	
+
 	private String nome;
-	
+
 	private String ano;
-	
+
 	private BigDecimal preco;
-	
+
 	private String cidade;
-	
+
 	private Long km;
-	
+
 	private StatusCarro status;
-	
+
 	private OffsetDateTime dataCriacao;
-	
+
 	private OffsetDateTime dataAtualizacao;
-	
+
 	private Usuario usuario;
-	
+
 	private List<FotoCarViewModel> fotos;
 
 	public Long getId() {

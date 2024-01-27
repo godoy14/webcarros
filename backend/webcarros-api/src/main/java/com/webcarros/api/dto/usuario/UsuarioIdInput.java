@@ -3,7 +3,7 @@ package com.webcarros.api.dto.usuario;
 import jakarta.validation.constraints.NotNull;
 
 public class UsuarioIdInput {
-	
+
 	@NotNull
 	private Long id;
 

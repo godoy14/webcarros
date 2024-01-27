@@ -8,10 +8,10 @@ import com.webcarros.domain.model.Foto;
 
 @Component
 public class FotoAssemblers {
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	public FotoModel toModel(Foto foto) {
 		return modelMapper.map(foto, FotoModel.class);
 	}

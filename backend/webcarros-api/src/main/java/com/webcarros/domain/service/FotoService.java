@@ -15,21 +15,21 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class FotoService {
-	
+
 	@Autowired
 	private FotoRepository fotoRepository;
-	
+
 	public Foto buscarFotoPorCodigo(String codigo) {
 		return fotoRepository.findByCodigo(codigo).orElseThrow();
 	}
-	
+
 	public List<Foto> buscarPorNomeECarro(String nome, String carroCodigo) {
 		return fotoRepository.findByNomeAndCarroCodigo(nome, carroCodigo);
 	}
-	
+
 	@Transactional
 	public Foto cadastrarNovaFoto(MultipartFile file, Carro carro) {
-		
+
 		Foto foto = new Foto();
 		foto.setCarro(carro);
 		foto.setNome(file.getOriginalFilename());
@@ -38,7 +38,7 @@ public class FotoService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return fotoRepository.save(foto);
 	}
 

@@ -10,7 +10,7 @@ import com.webcarros.domain.repository.UsuarioRepository;
 
 @Service
 public class AuthorizationService implements UserDetailsService{
-	
+
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 

@@ -21,26 +21,26 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tab_usuarios")
 public class Usuario implements UserDetails{
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "usuario_id")
 	private Long id;
-	
+
 	@Column(nullable = false)
 	private String nome;
-	
+
 	@Column(nullable = false)
 	private String email;
-	
+
 	@Column(nullable = false)
 	private String senha;
-	
+
 	@Enumerated(EnumType.STRING)
 	private CargoUsuario cargo;
-	
+
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
 	private OffsetDateTime dataCadastro;
@@ -103,30 +103,35 @@ public class Usuario implements UserDetails{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if ((obj == null) || (getClass() != obj.getClass())) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
 		Usuario other = (Usuario) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		if(this.cargo == CargoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-		else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		if(this.cargo == CargoUsuario.ADMIN) {
+			return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+		} else {
+			return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		}
 	}
 
 	@Override
 	public String getPassword() {
-		return null;
+		return this.senha;
 	}
 
 	@Override

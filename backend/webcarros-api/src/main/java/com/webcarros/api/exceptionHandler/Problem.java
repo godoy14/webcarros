@@ -6,16 +6,16 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 public class Problem {
-	
+
 	private Integer status;
-	
+
 	private String type;
-	
+
 	private String detail;
-	
+
 	@CreationTimestamp
 	private OffsetDateTime timestamp;
-	
+
 	private List<Object> objects;
 
 	public Problem(Integer status, String type, String detail, List<Object> objects) {
@@ -65,12 +65,12 @@ public class Problem {
 	public void setObjects(List<Object> objects) {
 		this.objects = objects;
 	}
-	
+
 	public static class Object {
 
 		private String name;
 		private String userMessage;
-		
+
 		public Object(String name, String userMessage) {
 			super();
 			this.name = name;
@@ -88,8 +88,8 @@ public class Problem {
 		public void setUserMessage(String userMessage) {
 			this.userMessage = userMessage;
 		}
-		
-		
+
+
 	}
 
 }

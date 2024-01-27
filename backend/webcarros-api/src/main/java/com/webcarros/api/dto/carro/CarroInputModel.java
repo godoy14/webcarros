@@ -12,19 +12,19 @@ public class CarroInputModel {
 
 	@NotBlank
 	private String nome;
-	
+
 	@NotBlank
 	private String ano;
-	
+
 	@NotNull
 	private BigDecimal preco;
-	
+
 	@NotBlank
 	private String cidade;
-	
+
 	@NotNull
 	private Long km;
-	
+
 	@Valid
 	@NotNull
 	private UsuarioIdInput usuario;

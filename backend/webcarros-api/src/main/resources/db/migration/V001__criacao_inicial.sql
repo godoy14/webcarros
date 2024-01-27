@@ -31,7 +31,7 @@ create table tab_usuarios (
 	usuario_id bigint not null auto_increment,
 	email varchar(100) not null,
 	nome varchar(100) not null,
-	senha varchar(50) not null,
+	senha varchar(100) not null,
 	primary key (usuario_id)
 ) engine=InnoDB;
 

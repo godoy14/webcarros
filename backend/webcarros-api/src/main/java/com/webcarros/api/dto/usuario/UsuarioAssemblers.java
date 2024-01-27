@@ -12,21 +12,21 @@ import com.webcarros.domain.model.Usuario;
 
 @Component
 public class UsuarioAssemblers {
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	public UsuarioModel toModel(Usuario usuario) {
 		return modelMapper.map(usuario, UsuarioModel.class);
 	}
-	
-	
+
+
 	public List<UsuarioModel> toCollectionModel(Collection<Usuario> usuarios) {
 		return usuarios.stream()
 				.map(usuario -> toModel(usuario))
 				.collect(Collectors.toList());
 	}
-	
+
 	public Usuario toDomainObject(UsuarioInputModel usuarioInput) {
 		return modelMapper.map(usuarioInput, Usuario.class);
 	}

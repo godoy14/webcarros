@@ -21,45 +21,45 @@ import com.webcarros.domain.exception.EntidadeNaoEncontradaException;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		
+
 		HttpStatus status1 = HttpStatus.BAD_REQUEST;
 		String problemType = "DADOS_INVALIDOS";
-		
+
 		String detail = "Um ou mais campos estão inválidos. Faça o preenchimento" + " correto e tente novamente";
-		
+
 		List<Problem.Object> list = new ArrayList<>();
-		
+
 		ex.getBindingResult().getAllErrors().forEach(objectError -> {
-			
+
 			String name = ((FieldError) objectError).getField();
 			String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
-			
+
 			Problem.Object obj = new Problem.Object(name, message);
 			list.add(obj);
 		});
-		
+
 		Problem problem = new Problem(status1.value(), problemType, detail, list);
-		
+
 		return handleExceptionInternal(ex, problem, headers, status1, request);
 	}
-	
+
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
 	public ResponseEntity<?> handleEntidadeNaoEncontradaException(EntidadeNaoEncontradaException ex, WebRequest request) {
-		
+
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		String problemType = "RECURSO_NAO_ENCONTRADO";
 		String detail = ex.getMessage();
-		
+
 		Problem problem = new Problem(status.value(), problemType, detail, null);
-		
-		
+
+
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 	}
 

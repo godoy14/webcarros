@@ -30,64 +30,64 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(path = "/carros")
 public class CarroController {
-	
+
 	@Autowired
 	private CarroService carroService;
-	
+
 	@Autowired
 	private CarroAssemblers carroAssemblers;
-	
+
 //	@GetMapping
 //	public List<CarroModel> listarTodos() {
 //		return carroAssemblers.toCollectionModel(carroService.listarTodos());
 //	}
-	
+
 	@GetMapping("detalhes/{codigoCarro}")
 	public CarroModel detalhesCarroPeloCodigo(
 			@PathVariable String codigoCarro) {
 		return carroAssemblers.toModel(carroService.buscarOuFalhar(codigoCarro));
 	}
-	
+
 	@GetMapping
 	public List<CarroModel> listarCarrosPorStatus(@RequestParam(value = "status") String status) {
 		return carroAssemblers.toCollectionModel(carroService.listarPeloStatus(status));
 	}
-	
+
 	@GetMapping("/pesquisa")
 	public List<CarroModel> listarCarrosPeloNomeContendo(
 			@RequestParam(value = "nome") String nome,
 			@RequestParam(value = "status") String status) {
 		return carroAssemblers.toCollectionModel(carroService.listarPeloNomeEStatus(nome, status));
 	}
-	
+
 	@GetMapping("/{usuarioId}")
 	public List<CarroModel> listarCarrosPorUsuario(@PathVariable Long usuarioId) {
 		return carroAssemblers.toCollectionModel(carroService.listarPeloUsuario(usuarioId));
 	}
-	
+
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public CarroModel cadastrar(
-			@ModelAttribute @Valid CarroInputModel carroInput, 
+			@ModelAttribute @Valid CarroInputModel carroInput,
 			@RequestPart List<MultipartFile> fotos) {
-		
+
 		Carro carro = new Carro();
-		
+
 		if (fotos.isEmpty() || fotos == null) {
 			carro = carroService.cadastrar(carroInput);
 		} else {
 			carro = carroService.cadastrarComFotos(carroInput, fotos);
 		}
-		
+
 		if (carro == null) {
 			System.out.println("Erro no cadastro do Carro");
 		}
-		
-		
+
+
 		return carroAssemblers.toModel(carro);
 	}
-	
+
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/{carroCodigo}")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
@@ -95,27 +95,27 @@ public class CarroController {
 			@ModelAttribute @Valid CarroInputModel carroInput,
 			@RequestPart List<MultipartFile> fotos,
 			@PathVariable String carroCodigo) {
-		
+
 		Carro carroAtualizado = carroService.atualizar(carroInput, fotos, carroCodigo);
-		
+
 		return carroAssemblers.toModel(carroAtualizado);
 	}
-	
+
 	@DeleteMapping
 	@ResponseStatus(HttpStatus.OK)
 	public void deletar(
 			@RequestParam(value = "codigoCarro") String codigoCarro,
 			@RequestParam(value = "usuario") Long usuarioId
 		) {
-		
+
 		Carro carro = carroService.buscarOuFalhar(codigoCarro);
-		
+
 		if (carro.getUsuario().getId() != usuarioId) {
 			throw new RuntimeException("Usuario sem permissão");
 		}
-		
+
 		carroService.deletar(carro.getId());
-		
+
 	}
 
 }

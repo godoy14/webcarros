@@ -14,11 +14,11 @@ import com.webcarros.domain.model.Usuario;
 public interface CarroRepository extends JpaRepository<Carro, Long>{
 
 	List<Carro> findByStatus(StatusCarro status);
-	
+
 	Optional<Carro> findByCodigo(String codigo);
-	
+
 	List<Carro> findByUsuario(Usuario usuario);
-	
+
 	List<Carro> findByNomeContainsAndStatus(String nome, StatusCarro status);
-	
+
 }

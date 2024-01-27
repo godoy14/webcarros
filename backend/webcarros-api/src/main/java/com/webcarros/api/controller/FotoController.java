@@ -18,17 +18,17 @@ import com.webcarros.domain.service.FotoService;
 @RestController
 @RequestMapping(path = "fotos/")
 public class FotoController {
-	
+
 	@Autowired
 	private FotoService fotoService;
-	
+
 	@GetMapping("/{codigo}")
 	public ResponseEntity<InputStreamResource> buscarFotoPorCodigo(@PathVariable String codigo) {
-		
+
 		Foto foto = fotoService.buscarFotoPorCodigo(codigo);
-		
+
 		InputStream inputStream = new ByteArrayInputStream(foto.getImage());
-		
+
 		return ResponseEntity.ok()
 				.contentType(MediaType.IMAGE_JPEG)
 				.body(new InputStreamResource(inputStream));

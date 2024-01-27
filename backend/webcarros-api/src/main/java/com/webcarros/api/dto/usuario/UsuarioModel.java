@@ -3,9 +3,9 @@ package com.webcarros.api.dto.usuario;
 public class UsuarioModel {
 
 	private Long id;
-	
+
 	private String nome;
-	
+
 	private String email;
 
 	public Long getId() {
@@ -31,5 +31,5 @@ public class UsuarioModel {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 }
