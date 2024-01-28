@@ -28,6 +28,8 @@ public class SecurityConfig {
 								session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.GET, "/carros").permitAll()
+						.requestMatchers(HttpMethod.GET, "/carros/detalhes/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/fotos/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/usuarios/cadastro").permitAll()
 						.requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")

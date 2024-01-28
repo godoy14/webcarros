@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 import logoImg from '../../assets/logo.svg';
@@ -11,10 +11,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth } from '../../services/firebaseConnection';
-
 import toast from 'react-hot-toast';
+
+import axios from '../../api/axios';
+
+import { AuthContext } from '../../contexts/authContext';
 
 const schema = z.object({
     email: z.string().email("Insira um email válido").nonempty("O campo email é obrigatório."),
@@ -25,6 +26,8 @@ type FormData = z.infer<typeof schema>;
 
 export function Login() {
 
+    const { handleInfoUser, handleSignOut } = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors }} = useForm<FormData>({
@@ -34,15 +37,26 @@ export function Login() {
 
     useEffect(() => {
         async function handleLogOut(){
-            await signOut(auth);
+            await handleSignOut();
         };
 
         handleLogOut();
     }, []);
 
-    function onSubmit(data : FormData) {
-        signInWithEmailAndPassword(auth, data.email, data.password)
-            .then((user) => {
+    async function onSubmit(data : FormData) {
+
+        const LOGIN_URL = '/usuarios/login';
+
+        await axios.post(LOGIN_URL, {
+            "login": data.email,
+            "senha": data.password
+        }).then((user) => {
+                handleInfoUser({
+                    uid: user?.data?.codigo,
+                    name: user?.data?.nome,
+                    email: user?.data?.email,
+                    token: user?.data?.token
+                })
                 console.log("Logado com sucesso")
                 console.log(user)
                 toast.success("Logado com sucesso!")

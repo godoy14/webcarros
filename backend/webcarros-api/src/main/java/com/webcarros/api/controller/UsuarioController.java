@@ -60,10 +60,12 @@ public class UsuarioController {
 	public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO data) {
 		var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.senha());
 		var auth = this.authenticationManager.authenticate(usernamePassword);
-
-		var token = tokenService.generateToken((Usuario) auth.getPrincipal());
 		
-		return ResponseEntity.ok(new LoginResponseDTO(token));
+		Usuario usuario = (Usuario) auth.getPrincipal();
+
+		var token = tokenService.generateToken(usuario);
+		
+		return ResponseEntity.ok(new LoginResponseDTO(usuario.getNome(), usuario.getEmail(), usuario.getId(), token));
 	}
 
 }

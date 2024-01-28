@@ -47,6 +47,7 @@ export function Dashboard() {
     const [cars, setCars] = useState<ICarProps[]>([]);
 
     useEffect(() => {
+        
         function loadCars() {
             if(!user?.uid) {
                 return;

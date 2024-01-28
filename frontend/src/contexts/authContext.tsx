@@ -1,8 +1,5 @@
 import { ReactNode, createContext, useState, useEffect } from 'react';
 
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../services/firebaseConnection';
-
 interface IAuthProviderProps {
     children: ReactNode
 }
@@ -11,12 +8,14 @@ interface IUserProps {
     uid: string;
     name: string | null;
     email: string | null;
+    token: string | null;
 }
 
 type AuthContextData = {
     signed : boolean;
     loadingAuth : boolean;
-    handleInfoUser : ({ name, email, uid } : IUserProps) => void;
+    handleInfoUser : ({ name, email, uid, token } : IUserProps) => void;
+    handleSignOut : () => void;
     user : IUserProps | null;
 }
 
@@ -27,31 +26,38 @@ function AuthProvider ({children} : IAuthProviderProps) {
     const [user, setUser] = useState<IUserProps | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
 
-    useEffect(() => {
-        const unsub = onAuthStateChanged(auth, (user) => {
-            if(user) {
-                setUser({
-                    uid: user.uid,
-                    name: user?.displayName,
-                    email: user?.email
-                })
+    // useEffect(() => {
+    //     const unsub = onAuthStateChanged(auth, (user) => {
+    //         if(user) {
+    //             setUser({
+    //                 uid: user.uid,
+    //                 name: user?.displayName,
+    //                 email: user?.email,
+    //                 token: user?.to
+    //             })
 
-                setLoadingAuth(false);
-            } else {
-                setUser(null);
-                setLoadingAuth(false);
-            }
-        })
+    //             setLoadingAuth(false);
+    //         } else {
+    //             setUser(null);
+    //             setLoadingAuth(false);
+    //         }
+    //     })
 
-        return () => {
-            unsub();
-        }
-    }, []);
+    //     return () => {
+    //         unsub();
+    //     }
+    // }, []);
 
-    function handleInfoUser({ name, email, uid } : IUserProps){
+    function handleInfoUser({ name, email, uid, token } : IUserProps){
         setUser({
-            name, email, uid
+            name, email, uid, token
         })
+        setLoadingAuth(false);
+    }
+
+    function handleSignOut() {
+        console.log(user);
+        setUser(null);
     }
 
     return(
@@ -60,6 +66,7 @@ function AuthProvider ({children} : IAuthProviderProps) {
                 signed : !!user,
                 loadingAuth,
                 handleInfoUser,
+                handleSignOut,
                 user
             }}
         >
