@@ -108,6 +108,7 @@ export function CarDetail() {
                     pagination={{ clickable : true}}
                     navigation
                 >
+                    
                     {car?.images.map( image => (
                         <SwiperSlide
                             key={image.uid}

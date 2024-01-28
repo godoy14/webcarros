@@ -60,7 +60,7 @@ public class CarroController {
 		return carroAssemblers.toCollectionModel(carroService.listarPeloNomeEStatus(nome, status));
 	}
 
-	@GetMapping("/{usuarioId}")
+	@GetMapping("/usuario/{usuarioId}")
 	public List<CarroModel> listarCarrosPorUsuario(@PathVariable Long usuarioId) {
 		return carroAssemblers.toCollectionModel(carroService.listarPeloUsuario(usuarioId));
 	}

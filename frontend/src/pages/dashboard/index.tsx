@@ -1,38 +1,24 @@
 
 import { useState, useEffect, useContext } from 'react';
 
-import { Container } from "../../components/container"
-import { DashboardHeader } from "../../components/panelHeader"
+import { Container } from "../../components/container";
+import { DashboardHeader } from "../../components/panelHeader";
+
+import axios from '../../api/axios';
 
 import { FiTrash2 } from 'react-icons/fi';
-
-import {
-    collection,
-    query,
-    getDocs,
-    where,
-    doc,
-    deleteDoc
-} from 'firebase/firestore';
-
-import {
-    ref,
-    deleteObject
-} from 'firebase/storage';
-
-import { db, storage } from '../../services/firebaseConnection';
 
 import { AuthContext } from '../../contexts/authContext';
 
 interface ICarProps {
     id: string;
-    name: string;
-    year: string;
-    uid: string;
-    price: string | number;
-    city: string;
+    nome: string;
+    ano: string;
+    codigo: string;
+    preco: string | number;
+    cidade: string;
     km: string;
-    images: ICarImageProps[];
+    fotos: ICarImageProps[];
 }
 
 interface ICarImageProps {
@@ -41,6 +27,8 @@ interface ICarImageProps {
     url: string;
 }
 
+const BASE_URL = "http://localhost:8080";
+
 export function Dashboard() {
 
     const { user } = useContext(AuthContext);
@@ -48,34 +36,35 @@ export function Dashboard() {
 
     useEffect(() => {
         
-        function loadCars() {
-            if(!user?.uid) {
+        async function loadCars() {
+            if(!user?.uid && !user?.token) {
                 return;
             }
 
-            const carsRef = collection(db, "cars");
-            const queryRef = query(carsRef, where("uid", "==", user.uid));
+            const CARS_URL = `/carros/usuario/${user.uid}`;
 
-            getDocs(queryRef)
-             .then((snapshot) => {
-                let listCars = [] as ICarProps[];
-
-                snapshot.forEach(doc => {
-                    listCars.push({
-                        id: doc.id,
-                        uid: doc.data().uid,
-                        name: doc.data().name,
-                        year: doc.data().year,
-                        price: doc.data().price,
-                        city: doc.data().city,
-                        km: doc.data().km,
-                        images: doc.data().images
-                    })
+            await axios.get(CARS_URL, {
+                params: {
+                    status : 'A_VENDA'
+                },
+                headers: {'Authorization': `Bearer ${user.token}`}
+            }).then(snapshot => {
+    
+                const r = snapshot.data.map((item : ICarProps) => {
+                    return {
+                        id: item.id,
+                        codigo: item.codigo,
+                        nome: item.nome,
+                        ano: item.ano,
+                        preco: item.preco,
+                        cidade: item.cidade,
+                        km: item.km,
+                        fotos: item.fotos
+                    }
                 })
-
-                setCars(listCars);
+    
+                setCars(r);
             })
-
         }
 
         loadCars();
@@ -85,20 +74,32 @@ export function Dashboard() {
     async function handleDeleteCar( car : ICarProps) {
         const itemCar = car;
 
-        const docRef = doc(db, "cars", itemCar.id);
-        await deleteDoc(docRef);
-        car.images.map( async (image) => {
-            const imagePath = `images/${image.uid}/${image.name}`;
-            const imageRef = ref(storage, imagePath);
-            
-            try {
-                await deleteObject(imageRef)
-            } catch (error) {
-                console.log(error);
-            }
+        const CARS_URL = '/carros';
+
+        await axios.delete(CARS_URL, {
+            params: {
+                codigoCarro : car.codigo,
+                usuario: user?.uid
+            },
+            headers: {'Authorization': `Bearer ${user?.token}`}
+        }).then(() => {
+            setCars(cars.filter(car => car.id !== itemCar.id));
         })
+
+        // const docRef = doc(db, "cars", itemCar.id);
+        // await deleteDoc(docRef);
+        // car.images.map( async (image) => {
+        //     const imagePath = `images/${image.uid}/${image.name}`;
+        //     const imageRef = ref(storage, imagePath);
+            
+        //     try {
+        //         await deleteObject(imageRef)
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // })
         
-        setCars(cars.filter(car => car.id !== itemCar.id));
+        // setCars(cars.filter(car => car.id !== itemCar.id));
     }
 
 
@@ -121,24 +122,24 @@ export function Dashboard() {
                         </button>
                         <img 
                             className="w-full rounded-lg mb-2 max-h-72"
-                            src={car.images[0].url}
+                            src={BASE_URL + car.fotos[0].url}
                             alt="Foto do carro"
                         />
-                        <p className="font-bold mt-1 px-2 mb-2">{car.name}</p>
+                        <p className="font-bold mt-1 px-2 mb-2">{car.nome}</p>
 
                         <div className="flex flex-col px-2">
                             <span className="text-zinc-700">
-                                Ano {car.year} | {car.km} KM
+                                Ano {car.ano} | {car.km} KM
                             </span>
                             <strong className="text-black font-bold mb-4">
-                                R$ {car.price}
+                                R$ {car.preco}
                             </strong>
                         </div>
 
                         <div className="w-full h-px bg-slate-300 my-2"></div>
                         <div className="px-2 pb-2">
                             <span className="text-black">
-                                {car.city}
+                                {car.cidade}
                             </span>
                         </div>
                         

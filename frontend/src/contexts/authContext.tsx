@@ -26,37 +26,20 @@ function AuthProvider ({children} : IAuthProviderProps) {
     const [user, setUser] = useState<IUserProps | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
 
-    // useEffect(() => {
-    //     const unsub = onAuthStateChanged(auth, (user) => {
-    //         if(user) {
-    //             setUser({
-    //                 uid: user.uid,
-    //                 name: user?.displayName,
-    //                 email: user?.email,
-    //                 token: user?.to
-    //             })
-
-    //             setLoadingAuth(false);
-    //         } else {
-    //             setUser(null);
-    //             setLoadingAuth(false);
-    //         }
-    //     })
-
-    //     return () => {
-    //         unsub();
-    //     }
-    // }, []);
+    useEffect(() => {
+        setLoadingAuth(false);
+    }, []);
 
     function handleInfoUser({ name, email, uid, token } : IUserProps){
         setUser({
-            name, email, uid, token
+            uid: uid,
+            name: name,
+            email: email,
+            token: token
         })
-        setLoadingAuth(false);
     }
 
     function handleSignOut() {
-        console.log(user);
         setUser(null);
     }
 

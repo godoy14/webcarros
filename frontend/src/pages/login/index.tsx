@@ -36,8 +36,8 @@ export function Login() {
     });
 
     useEffect(() => {
-        async function handleLogOut(){
-            await handleSignOut();
+        function handleLogOut(){
+            handleSignOut();
         };
 
         handleLogOut();
@@ -58,7 +58,6 @@ export function Login() {
                     token: user?.data?.token
                 })
                 console.log("Logado com sucesso")
-                console.log(user)
                 toast.success("Logado com sucesso!")
                 navigate("/dashboard", { replace : true })
             })

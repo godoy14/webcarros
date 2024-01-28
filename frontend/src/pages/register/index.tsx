@@ -12,9 +12,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { auth } from '../../services/firebaseConnection';
-import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
 import toast from 'react-hot-toast';
+
+import axios from '../../api/axios';
 
 const schema = z.object({
     name: z.string().nonempty("O campo nome é obrigatório"),
@@ -28,7 +28,7 @@ export function Register() {
 
     const navigate = useNavigate();
 
-    const { handleInfoUser } = useContext(AuthContext);
+    const { handleInfoUser, handleSignOut } = useContext(AuthContext);
 
     const { register, handleSubmit, formState: { errors }} = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -36,30 +36,35 @@ export function Register() {
     });
 
     async function onSubmit(data : FormData) {
-        createUserWithEmailAndPassword(auth, data.email, data.password)
-            .then( async (user) => {
-                await updateProfile(user.user, {
-                    displayName: data.name
-                })
+
+        const REGISTER_URL = '/usuarios/cadastro';
+
+        await axios.post(REGISTER_URL, {
+            "nome": data.name,
+            "email": data.email,
+            "senha": data.password,
+            "cargo": "USER"
+        }).then((user) => {
                 handleInfoUser({
-                    name: data.name,
-                    email: data.email,
-                    uid: user.user.uid
+                    uid: user?.data?.codigo,
+                    name: user?.data?.nome,
+                    email: user?.data?.email,
+                    token: user?.data?.token
                 })
                 console.log("cadastrado com sucesso");
-                toast.success("Registrado com sucesso!")
-                navigate("/dashboard", { replace : true })
+                toast.success("Registrado com sucesso!");
+                navigate("/dashboard", { replace : true });
             })
             .catch((error) => {
-                toast.error("Erro ao cadastrar!")
-                console.log("erro ao cadastrar")
-                console.log(error)
+                toast.error("Erro ao cadastrar!");
+                console.log("erro ao cadastrar");
+                console.log(error);
             })
     }
 
     useEffect(() => {
-        async function handleLogOut(){
-            await signOut(auth);
+        function handleLogOut(){
+            handleSignOut();
         };
 
         handleLogOut();
