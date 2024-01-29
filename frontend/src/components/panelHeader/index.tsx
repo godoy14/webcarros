@@ -1,12 +1,15 @@
+import { useContext } from 'react';
 
 import { Link } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../services/firebaseConnection';
+
+import { AuthContext } from '../../contexts/authContext';
 
 export function DashboardHeader() {
 
+    const { handleSignOut } = useContext(AuthContext);
+
     async function handleLogOut() {
-        await signOut(auth);
+        await handleSignOut();
     }
 
     return (

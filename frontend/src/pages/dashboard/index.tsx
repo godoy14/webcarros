@@ -85,21 +85,6 @@ export function Dashboard() {
         }).then(() => {
             setCars(cars.filter(car => car.id !== itemCar.id));
         })
-
-        // const docRef = doc(db, "cars", itemCar.id);
-        // await deleteDoc(docRef);
-        // car.images.map( async (image) => {
-        //     const imagePath = `images/${image.uid}/${image.name}`;
-        //     const imageRef = ref(storage, imagePath);
-            
-        //     try {
-        //         await deleteObject(imageRef)
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // })
-        
-        // setCars(cars.filter(car => car.id !== itemCar.id));
     }
 
 

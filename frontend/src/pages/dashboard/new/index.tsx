@@ -5,26 +5,17 @@ import { AuthContext } from "../../../contexts/authContext";
 
 import { Container } from "../../../components/container";
 import { DashboardHeader } from "../../../components/panelHeader";
+import { Input } from "../../../components/input";
 
 import { FiUpload, FiTrash } from 'react-icons/fi';
 
 import { useForm } from 'react-hook-form';
-import { Input } from "../../../components/input";
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { v4 as uuidV4 } from 'uuid';
-
-import { storage, db } from '../../../services/firebaseConnection';
-import {
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject
-} from 'firebase/storage';
-
-import { addDoc, collection} from 'firebase/firestore';
 import toast from "react-hot-toast";
+
+import axios from "../../../api/axios";
 
 const schema = z.object({
     name: z.string().nonempty("O nome é obrigatório."),
@@ -42,10 +33,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 interface IImageItemProps{
-    uid: string;
     name: string;
     previewUrl: string;
-    url: string;
+    data: File;
 }
 
 export function New() {
@@ -59,44 +49,48 @@ export function New() {
         mode: "onChange"
     })
 
-    function onSubmit(data : FormData){
+    async function onSubmit(data : FormData){
+
+        const CADASTRO_CARRO_URL = '/carros';
 
         if(carImages.length === 0) {
             toast.error("Envie alguma imagem deste carro!")
             return;
         }
 
-        const carListImages = carImages.map( car => {
-            return{
-                uid: car.uid,
-                name: car.name,
-                url: car.url
-            }
+        const form = new FormData();
+        form.append('nome', data.name);
+        form.append('ano', data.year);
+        form.append('preco', data.price);
+        form.append('cidade', data.city);
+        form.append('km', data.km);
+        form.append('usuario.id', user?.uid as string);
+
+        carImages.forEach(car => {
+            form.append('fotos', new Blob([car.data]));
         })
 
-        addDoc(collection(db, "cars"), {
-            name: data.name.toUpperCase(),
-            model: data.model,
-            whatsapp: data.whatsapp,
-            city: data.city,
-            year: data.year,
-            km: data.km,
-            price: data.price,
-            description: data.description,
-            created: new Date(),
-            ownder: user?.name,
-            uid: user?.uid,
-            images: carListImages
-        }).then(() => {
-            toast.success("Carro cadastrado com sucesso!")
-            console.log("cadastrado com sucesso");
-            reset();
-            setCarImages([]);
-        }).catch((error) => {
-            toast.error("Não foi possível cadastrar o carro!")
-            console.log(error);
-        })
+        form.append('whatsapp', data.name);
+        form.append('description', data.name);
 
+        console.log(form.get('fotos'));
+
+        await axios.post(
+                CADASTRO_CARRO_URL,
+                form, {
+                    headers: {'Authorization': `Bearer ${user?.token}`}
+                }
+            )
+            .then(() => {
+                toast.success("Carro cadastrado com sucesso!")
+                console.log("cadastrado com sucesso");
+                reset();
+                setCarImages([]);
+            })
+            .catch((error) => {
+                toast.error("Não foi possível cadastrar o carro!")
+                console.log(error);
+            })
     }
 
     async function handleFile(e : ChangeEvent<HTMLInputElement>){
@@ -120,34 +114,18 @@ export function New() {
             return;
         }
 
-        const currentUid = user?.uid;
-        const uidImage = uuidV4();
-
-        const uploadRef = ref(storage, `images/${currentUid}/${uidImage}`);
-        uploadBytes(uploadRef, image)
-            .then((snapshot) => {
-                getDownloadURL(snapshot.ref).then((dowsloadURL) => {
-                        const imageItem = {
-                            name: uidImage,
-                            uid: currentUid,
-                            previewUrl: URL.createObjectURL(image),
-                            url: dowsloadURL,
-                        }
-                        setCarImages((images) => [...images, imageItem]);
-                    })
-            })
+        const imageItem : IImageItemProps = {
+            name: image.name,
+            previewUrl: URL.createObjectURL(image),
+            data: image
+        } 
+        setCarImages((images) => [...images, imageItem]);
 
     }
 
     async function handleDeleteImage(item : IImageItemProps) {
-        const imagePath = `images/${item.uid}/${item.name}`;
-        const imageRef = ref(storage, imagePath);
-        try {
-            await deleteObject(imageRef)
-            setCarImages(carImages.filter((car) => car.url !== item.url));
-        } catch(err) {
-            console.log(err)
-        }
+
+        setCarImages(carImages.filter((car) => car.previewUrl !== item.previewUrl));
     }
 
     return(
